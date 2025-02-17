@@ -1,0 +1,104 @@
+/**
+ * Beschreiben Sie hier die Klasse Aufzug.
+ * 
+ * @author (Ihr Name) 
+ * @version (eine Versionsnummer oder ein Datum)
+ */
+public class Aufzug
+{
+    // Instanzvariablen
+    private int aktuellesStockwerk;
+    private int maximalesStockwerk; 
+    private int minimalesStockwerk; 
+    private int maximalePersonenanzahl; 
+    private int aktuellePersonenanzahl; 
+    private boolean tuerZustand; 
+
+    /**
+     * Konstruktor für Objekte der Klasse Aufzug
+     * @param pMaximalesStockwerk Die maximale Anzahl der Stockwerke
+     * @param pMinimalesStockwerk Die minimale Anzahl der Stockwerke
+     * @param pMaximalePersonenzahl Die maximale Anzahl der Personen im Aufzug
+     */
+    public Aufzug(int pMaximalesStockwerk, int pMinimalesStockwerk, int pMaximalePersonenanzahl)
+    {
+        maximalesStockwerk = pMaximalesStockwerk;
+        minimalesStockwerk = pMinimalesStockwerk;
+        maximalePersonenanzahl = pMaximalePersonenanzahl;
+        aktuellesStockwerk = minimalesStockwerk;
+        aktuellePersonenanzahl = 0;
+        // Auf ist true, zu ist false
+        tuerZustand = false;
+    }
+
+    private boolean personenZahlLegitim(int anzahl) {
+        return (aktuellePersonenanzahl + anzahl) <= maximalePersonenanzahl && 
+               (aktuellePersonenanzahl + anzahl) >= 0;
+    }
+    
+    private boolean stockwerkVorhanden(int stockwerk) {
+        return stockwerk >= minimalesStockwerk && stockwerk <= maximalesStockwerk;
+    }
+    
+    private boolean istTuerOffen() {
+        return tuerZustand;
+    }
+    
+    public int gibAktuellesStockwerk() {
+        return aktuellesStockwerk;
+    }
+    
+    public int gibAktuellePersonenzahl() {
+        return aktuellePersonenanzahl;
+    }
+    
+    public void tuerZustandAendern() {
+        tuerZustand = !tuerZustand;
+        System.out.println("Tür ist jetzt " + (tuerZustand ? "offen" : "geschlossen") + ".");
+    }
+    
+    public void einsteigen(int anzahl) {
+        if (!istTuerOffen()) {
+            tuerZustandAendern();
+        }
+
+        if (personenZahlLegitim(anzahl)) {
+            aktuellePersonenanzahl += anzahl;
+            System.out.println(anzahl + " Personen sind eingestiegen.");
+        } else {
+            System.out.println("Maximale Personenanzahl überschritten! Einstieg nicht möglich.");
+        }
+        
+        tuerZustandAendern();
+    }
+    
+    public void aussteigen(int anzahl) {
+        if (!istTuerOffen()) {
+            tuerZustandAendern();
+        }
+
+        if (personenZahlLegitim(-anzahl)) {
+            aktuellePersonenanzahl -= anzahl;
+            System.out.println(anzahl + " Personen sind ausgestiegen.");
+        } else {
+            System.out.println("Fehler: Mehr Personen wollen aussteigen, als im Aufzug sind!");
+        }
+        
+        tuerZustandAendern();
+    }
+    
+    public void fahreZuStockwerk(int zielEtage) {
+        if (!stockwerkVorhanden(zielEtage)) {
+            System.out.println("Fehler: Stockwerk " + zielEtage + " existiert nicht.");
+            return;
+        }
+
+        if (istTuerOffen()) {
+            tuerZustandAendern();
+        }
+
+        System.out.println("Aufzug fährt von Stockwerk " + aktuellesStockwerk + " zu Stockwerk " + zielEtage + "...");
+        aktuellesStockwerk = zielEtage;
+        System.out.println("Aufzug hat Stockwerk " + aktuellesStockwerk + " erreicht.");
+    }
+}
